@@ -16,8 +16,8 @@
         <vs-navbar-item :active="active == 'guide'" id="guide" @click="home()">
           หน้าแรก
         </vs-navbar-item>
-        <vs-navbar-item :active="active == 'docs'" id="docs">
-          Documents
+        <vs-navbar-item :active="active == 'docs'" id="docs" @click="report()">
+          รายงาน
         </vs-navbar-item>
         <vs-navbar-item :active="active == 'components'" id="components">
           Components
@@ -161,6 +161,9 @@ export default {
   methods: {
     home(){
       this.$router.push('/')
+    },
+    report(){
+      this.$router.push('/report')
     }
   },
 };

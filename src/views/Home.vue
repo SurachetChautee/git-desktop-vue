@@ -29,32 +29,52 @@
               ></iframe>
             </template>
             <template #text>
-              <div v-if="item.fm_status == '1'">
-                <p>สถานะ: กำลังใช้งาน</p>
-              </div>
-              <div v-else-if="item.fm_status == '2'">
-                <p>สถานะ: ไม่ได้ใช้งาน</p>
-              </div>
-              <div>
-                <br/>
+              <div class="box-card">
+                <div v-if="item.fm_status == '1'">
+                  <img
+                    src="https://www.iconsdb.com/icons/preview/green/circle-xxl.png"
+                    width="20"
+                    height="20"
+                  />
+                </div>
                 <div v-if="item.fm_status == '2'">
-                  <vs-button
-                    success
-                    class="btn_on"
-                    @click="UPDATE_STATUS(item.id, 1)"
-                  >
-                    เปิดการใช้งาน
-                  </vs-button>
+                  <img
+                    src="https://www.iconsdb.com/icons/preview/red/circle-xxl.png"
+                    width="20"
+                    height="20"
+                  />
                 </div>
 
-                <div v-if="item.fm_status == '1'">
-                  <vs-button
-                    danger
-                    class="btn_off"
-                    @click="UPDATE_STATUS(item.id, 2)"
-                  >
-                    ปิดการใช้งาน
-                  </vs-button>
+                <div v-if="item.fm_status == '1'" style="padding-left: 10px">
+                  <p>สถานะ: กำลังใช้งาน</p>
+                </div>
+                <div
+                  v-else-if="item.fm_status == '2'"
+                  style="padding-left: 10px"
+                >
+                  <p>สถานะ: ไม่ได้ใช้งาน</p>
+                </div>
+                <div>
+                  <br /><br />
+                  <div v-if="item.fm_status == '2'">
+                    <vs-button
+                      success
+                      class="btn_on"
+                      @click="UPDATE_STATUS(item.id, 1)"
+                    >
+                      เปิดการใช้งาน
+                    </vs-button>
+                  </div>
+
+                  <div v-if="item.fm_status == '1'">
+                    <vs-button
+                      danger
+                      class="btn_off"
+                      @click="UPDATE_STATUS(item.id, 2)"
+                    >
+                      ปิดการใช้งาน
+                    </vs-button>
+                  </div>
                 </div>
               </div>
             </template>
@@ -128,24 +148,29 @@ export default {
 
 .btn_on {
   height: 40px;
-  width: 100px;
+  width: 150px;
   margin: 0 auto;
   display: block;
   background: #4e9525;
-  margin-bottom: 3%;
+  margin-bottom: 5%;
+  margin-left: -40px;
 }
 .btn_off {
   height: 40px;
-  width: 100px;
+  width: 150px;
   margin: 0 auto;
   display: block;
   background: #cd0a0a;
   margin-bottom: 3%;
+  margin-left: -40px;
 }
 .box {
   margin-left: 8%;
 }
 .home {
   margin-top: -18px;
+}
+.box-card {
+  display: flex;
 }
 </style>
