@@ -124,7 +124,7 @@ export default {
         id: id,
         status: status,
       };
-      axios.post("http://localhost:4000/update_status", data).then((res) => {
+      axios.put("http://localhost:4000/update_status", data).then((res) => {
         console.log(res);
         location.reload();
       });
