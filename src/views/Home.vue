@@ -102,11 +102,7 @@ export default {
     this.CALL_API_FARM();
   },
   methods: {
-    API(id, value) {
-      console.log(id);
-      console.log(value);
-    },
-
+    
     CALL_API_FARM() {
       axios
         .get("http://localhost:4000/farm")
