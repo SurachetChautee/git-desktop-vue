@@ -1,6 +1,8 @@
 <template>
   <div class="home" :style="myStyle">
     <div class="card-card">
+      <br />
+      <h1 class="title-h">รายการทั้งหมด: {{ total }}</h1>
       <vs-row>
         <vs-col
           vs-type="flex"
@@ -17,45 +19,68 @@
               <h3>{{ item.fm_name }}</h3>
             </template>
             <template #img>
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.028071840172!2d102.82561571414878!3d16.474116188631925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31228a42912a3673%3A0xe236ed5e8a0a21d9!2sKKU%20Smart%20Learning%20Academy!5e0!3m2!1sth!2sth!4v1607929817934!5m2!1sth!2sth"
-                width="600"
-                height="450"
-                frameborder="0"
-                style="border: 0"
-                allowfullscreen=""
-                aria-hidden="false"
-                tabindex="0"
-              ></iframe>
+              <div v-if="item.fm_status == '1'">
+                <img src="../assets/img/online.jpg" />
+              </div>
+              <div v-if="item.fm_status == '2'">
+                <img src="../assets/img/off.jpg" />
+              </div>
             </template>
             <template #text>
               <div class="box-card">
-                <div v-if="item.fm_status == '1'">
-                  <img
-                    src="https://www.iconsdb.com/icons/preview/green/circle-xxl.png"
-                    width="20"
-                    height="20"
-                  />
-                </div>
-                <div v-if="item.fm_status == '2'">
-                  <img
-                    src="https://www.iconsdb.com/icons/preview/red/circle-xxl.png"
-                    width="20"
-                    height="20"
-                  />
-                </div>
-
-                <div v-if="item.fm_status == '1'" style="padding-left: 10px">
-                  <p>สถานะ: กำลังใช้งาน</p>
-                </div>
-                <div
-                  v-else-if="item.fm_status == '2'"
-                  style="padding-left: 10px"
-                >
-                  <p>สถานะ: ไม่ได้ใช้งาน</p>
-                </div>
-                <div>
-                  <br /><br />
+                <vs-row>
+                  <vs-col w="4">
+                    <div v-if="item.fm_status == '1'">
+                      <img
+                        src="../assets/img/icon_online.png"
+                        width="20"
+                        height="20"
+                      />
+                    </div>
+                    <div v-if="item.fm_status == '2'">
+                      <img
+                        src="../assets/img/icon_offline.png"
+                        width="20"
+                        height="20"
+                      />
+                    </div>
+                  </vs-col>
+                  <vs-col w="4">
+                    <div
+                      v-if="item.fm_status == '1'"
+                      style="padding-left: 10px"
+                    >
+                      <p style="margin-left: -80px">สถานะ: กำลังใช้งาน</p>
+                    </div>
+                    <div
+                      v-else-if="item.fm_status == '2'"
+                      style="padding-left: 10px"
+                    >
+                      <p style="margin-left: -80px">สถานะ: ไม่ได้ใช้งาน</p>
+                    </div>
+                  </vs-col>
+                </vs-row>
+                <vs-row>
+                  <vs-col w="4">
+                    <div>
+                      <img
+                        src="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-512.png"
+                        width="20"
+                        height="20"
+                      />
+                    </div>
+                  </vs-col>
+                  <vs-col w="8">
+                    <div style="margin-left: -70px">
+                      <p>
+                        ที่อยู่ปัจจุบัน:{{
+                          item.fm_latitude + "," + item.fm_longitude
+                        }}
+                      </p>
+                    </div>
+                  </vs-col>
+                </vs-row>
+                <div style="margin-left: 40%; margin-top: 20px">
                   <div v-if="item.fm_status == '2'">
                     <vs-button
                       success
@@ -93,8 +118,9 @@ export default {
   data() {
     return {
       data: "",
+      total: "",
       myStyle: {
-        backgroundColor: "#333333",
+        backgroundColor: "#fafafa",
       },
     };
   },
@@ -102,13 +128,19 @@ export default {
     this.CALL_API_FARM();
   },
   methods: {
-    
     CALL_API_FARM() {
       axios
         .get("http://localhost:4000/farm")
         .then((res) => {
           this.data = res.data;
-          console.log(this.data);
+          this.total = res.data.length;
+          console.log(this.total);
+          // geocoder.geocoder({location:latlng},(results,status)=>{
+          //   if(status=="OK"){
+          //     var address =results[0].formatted_address
+          //     console.log(address)
+          //   }
+          //})
         })
         .catch((error) => {
           console.log("error", error);
@@ -123,6 +155,8 @@ export default {
       axios.put("http://localhost:4000/update_status", data).then((res) => {
         console.log(res);
         location.reload();
+        // this.data=""
+        // this.CALL_API_FARM()
       });
     },
   },
@@ -167,6 +201,12 @@ export default {
   margin-top: -18px;
 }
 .box-card {
-  display: flex;
+}
+.title-h {
+  margin-top: 20px;
+}
+p {
+  color: black;
+  font-weight: bold;
 }
 </style>

@@ -86,12 +86,28 @@
         <div class="card-chart2">
           <v-card
             :loading="loading"
-            class="mx-auto my-12"
+            class="mx-auto my-12" 
             width="240"
             height="300"
           >
             <v-card-text>
               <canvas id="my-chart" height="350%"></canvas>
+            </v-card-text>
+          </v-card>
+        </div>
+      </vs-col>
+    </vs-row>
+    <vs-row>
+      <vs-col w="12">
+        <div>
+          <v-card
+            :loading="loading"
+            class="chart-line"
+            width="745"
+            height="300"
+          >
+            <v-card-text>
+              <canvas id="my-chart-line" height="110%"></canvas>
             </v-card-text>
           </v-card>
         </div>
@@ -113,9 +129,9 @@ export default {
       data: [],
       on: 0,
       off: 0,
-      on_1:0,
-      off_1:0,
-      total_1:0,
+      on_1: 0,
+      off_1: 0,
+      total_1: 0,
     };
   },
   mounted() {
@@ -123,15 +139,15 @@ export default {
     this.data_online();
     this.chart();
     this.chart_pipe();
+    this.chart_line();
   },
   methods: {
     data_offline() {
       axios
-        .get("http://localhost:4000/farm")
+        .get("http://192.168.1.56:4000/farm")
         .then((res) => {
           this.data = res;
-          var i;
-          for (i = 0; i < this.data.data.length; i++) {
+          for (var i = 0; i < this.data.data.length; i++) {
             if (this.data.data[i].fm_status == 2) {
               this.offline = this.offline + 1;
             }
@@ -143,11 +159,10 @@ export default {
     },
     data_online() {
       axios
-        .get("http://localhost:4000/farm")
+        .get("http://192.168.1.56:4000/farm")
         .then((res) => {
           this.data = res;
-          var i;
-          for (i = 0; i < this.data.data.length; i++) {
+          for (var i = 0; i < this.data.data.length; i++) {
             if (this.data.data[i].fm_status == 1) {
               this.online = this.online + 1;
             }
@@ -160,7 +175,7 @@ export default {
     },
     chart() {
       axios
-        .get("http://localhost:4000/farm")
+        .get("http://192.168.1.56:4000/farm")
         .then((res) => {
           const responseData = res.data;
           console.log(responseData);
@@ -176,15 +191,20 @@ export default {
           var myChart = new Chart(ctx, {
             type: "bar",
             data: {
-              labels: ["กำลังใช้งาน", "ไม่ได้ใช้งาน"],
+              labels: ["System"],
               datasets: [
                 {
-                  data: [this.on, this.off],
-                  backgroundColor: [
-                    "rgba(124,252,0, 0.2)",
-                    "rgba(220,20,60, 0.2)",
-                  ],
-                  borderColor: ["rgba(0,128,0, 1)", "rgba(255,0,0, 1)"],
+                  label: "Online",
+                  data: [this.on],
+                  backgroundColor: ["rgba(124,252,0, 0.2)"],
+                  borderColor: ["rgba(0,128,0, 1)"],
+                  borderWidth: 1,
+                },
+                {
+                  label: "Offline",
+                  data: [this.off],
+                  backgroundColor: ["rgba(220,20,60, 0.2)"],
+                  borderColor: ["rgba(255,0,0, 1)"],
                   borderWidth: 1,
                 },
               ],
@@ -210,23 +230,23 @@ export default {
     },
     chart_pipe() {
       axios
-        .get("http://localhost:4000/farm")
+        .get("http://192.168.1.56:4000/farm")
         .then((res) => {
           const responseData = res.data;
-          console.log(responseData)
+          console.log(responseData);
           for (var i = 0; i < responseData.length; i++) {
             if (responseData[i].fm_status == 1) {
-              this.on_1= this.on_1 + 1;
+              this.on_1 = this.on_1 + 1;
             } else {
               this.off_1 = this.off_1 + 1;
             }
           }
-          this.total_1=responseData.length
+          this.total_1 = responseData.length;
           var ctx = document.getElementById("my-chart");
           var myChart = new Chart(ctx, {
             type: "doughnut",
             data: {
-              labels: ["กำลังใช้งาน", "ไม่ได้ใช้งาน", "อุปกรณ์ทั้งหมด"],
+              labels: ["Online", "Offine", "All equipment"],
               datasets: [
                 {
                   label: "Page A",
@@ -244,6 +264,33 @@ export default {
         .catch((error) => {
           console.log("error", error);
         });
+    },
+    chart_line() {
+      var ctx = document.getElementById("my-chart-line");
+      var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          datasets: [
+            {
+              label: "Page A",
+              data: [61, 122, 107, 73],
+              borderColor: "#6E7EF5",
+              fill: false,
+            },
+            {
+              label: "Page B",
+              data: [18, 170, 135, 92],
+              borderColor: "#B277DE",
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+        },
+      });
+      console.log(myChart);
     },
   },
 };
@@ -277,5 +324,10 @@ export default {
 .card-chart2 {
   margin-top: 6%;
   margin-left: -20%;
+}
+.chart-line {
+  margin-top: 2%;
+  margin-left: 20%;
+  margin-bottom: 5%;
 }
 </style>

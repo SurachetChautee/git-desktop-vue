@@ -14,13 +14,13 @@
           ></v-app-bar-nav-icon>
         </template>
         <vs-navbar-item :active="active == 'guide'" id="guide" @click="home()">
-          หน้าแรก
+          Home
         </vs-navbar-item>
         <vs-navbar-item :active="active == 'docs'" id="docs" @click="report()">
-          รายงาน
+          Dashboard
         </vs-navbar-item>
-        <vs-navbar-item :active="active == 'components'" id="components">
-          Components
+        <vs-navbar-item :active="active == 'components'" id="components" @click="map()">
+          Map
         </vs-navbar-item>
         <vs-navbar-item :active="active == 'license'" id="license">
           license
@@ -31,7 +31,7 @@
           <!-- ...img logo -->
         </template>
         <vs-sidebar-item id="home">
-          <template #icon >
+          <template #icon>
             <i class="bx bx-home"></i>
           </template>
           Home
@@ -164,6 +164,9 @@ export default {
     },
     report(){
       this.$router.push('/report')
+    },
+    map(){
+      this.$router.push('/map')
     }
   },
 };
