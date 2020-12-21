@@ -3,6 +3,21 @@
     <div class="card-card">
       <br />
       <h1 class="title-h">รายการทั้งหมด: {{ total }}</h1>
+
+      <vs-select placeholder="Select" v-model="value" @change="select(value)">
+        <vs-option label="ทั้งหมด" value="1">
+          ทั้งหมด
+        </vs-option>
+        <vs-option
+          v-for="(item) in province"
+          v-bind:key="item.fm_province"
+          v-bind:label="item.fm_province"
+          v-bind:value="item.fm_province"
+        >
+          {{item.fm_province}}
+        </vs-option>
+      </vs-select>
+
       <vs-row>
         <vs-col
           vs-type="flex"
@@ -72,11 +87,29 @@
                   </vs-col>
                   <vs-col w="8">
                     <div style="margin-left: -70px">
-                      <p>
-                        ที่อยู่ปัจจุบัน:{{
-                          item.fm_latitude + "," + item.fm_longitude
-                        }}
-                      </p>
+                      <vs-row>
+                        <vs-col w="9">
+                          <p>
+                            ที่อยู่ปัจจุบัน:{{
+                              item.fm_latitude + "," + item.fm_longitude
+                            }}
+                          </p>
+                        </vs-col>
+                        <vs-col w="3">
+                          <vs-button
+                            class="btn_map"
+                            flat
+                            success
+                            animation-type="vertical"
+                            @click="active = !active"
+                          >
+                            ดูแผนที่
+                            <template #animate>
+                              <i class="bx bx-mail-send"></i> ดูแผนที่
+                            </template>
+                          </vs-button>
+                        </vs-col>
+                      </vs-row>
                     </div>
                   </vs-col>
                 </vs-row>
@@ -100,6 +133,21 @@
                       ปิดการใช้งาน
                     </vs-button>
                   </div>
+                  <vs-dialog width="80%" not-center v-model="active">
+                    <template #header> </template>
+                    <div class="con-content">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7652.0752819356785!2d102.82203102170575!3d16.473631604528702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31228a42912a3673%3A0xe236ed5e8a0a21d9!2sKKU%20Smart%20Learning%20Academy!5e0!3m2!1sth!2sth!4v1608522119733!5m2!1sth!2sth"
+                        width="770"
+                        height="400"
+                        frameborder="0"
+                        style="border: 0"
+                        allowfullscreen=""
+                        aria-hidden="false"
+                        tabindex="0"
+                      ></iframe>
+                    </div>
+                  </vs-dialog>
                 </div>
               </div>
             </template>
@@ -117,8 +165,11 @@ export default {
   components: {},
   data() {
     return {
-      data: "",
+      value: 1,
+      active: false,
+      data: [],
       total: "",
+      province: [],
       myStyle: {
         backgroundColor: "#fafafa",
       },
@@ -126,6 +177,7 @@ export default {
   },
   mounted() {
     this.CALL_API_FARM();
+    this.PROVINCE();
   },
   methods: {
     CALL_API_FARM() {
@@ -136,7 +188,18 @@ export default {
           this.total = res.data.length;
           console.log(this.total);
           // geocoder.geocoder({location:latlng},(results,status)=>{
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
 
+    PROVINCE() {
+      axios
+        .get("http://localhost:4000/province")
+        .then((res) => {
+          this.province = res.data;
+          console.log(this.province);
         })
         .catch((error) => {
           console.log("error", error);
@@ -150,8 +213,26 @@ export default {
       };
       axios.put("http://localhost:4000/update_status", data).then((res) => {
         console.log(res);
-        window.history.go()
+        location.reload();
       });
+    },
+    select(value) {
+      if (value == 1) {
+        console.log("all");
+        this.data = "";
+        this.CALL_API_FARM();
+      } else {
+        let data = {
+          id: value,
+        };
+        axios.post("http://localhost:4000/select", data).then((res) => {
+          this.data = "";
+          this.data = res.data;
+          this.total = "";
+          this.total = res.data.length;
+          console.log(res)
+        });
+      }
     },
   },
 };
@@ -202,5 +283,10 @@ export default {
 p {
   color: black;
   font-weight: bold;
+}
+.btn_map {
+  margin-top: -3px;
+  width: 70px;
+  height: 25px;
 }
 </style>

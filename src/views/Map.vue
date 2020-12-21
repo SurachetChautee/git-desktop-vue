@@ -1,26 +1,59 @@
+
 <template>
-  <div style="margin-top: 90px;margin-left:12%">
-    <v-card max-width="1000" max-height="500">
-      <v-card-text>
-        <iframe
-          src="https://www.google.com/maps/
-          embed?pb=!1m18!1m12!1m3!1d3826.932356452091!2d102.86140821414796!3d16.428261488659945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31228bda829566e7%3A0x24ca9da06e436ef3!2z4Lih4Lir4Liy4Lin4Li04LiX4Lii4Liy4Lil4Lix4Lii4LmA4LiX4LiE4LmC4LiZ4LmC4Lil4Lii4Li14Lij4Liy4LiK4Lih4LiH4LiE4Lil4Lit4Li14Liq4Liy4LiZIOC4p-C4tOC4l-C4ouC4suC5gOC4guC4leC4guC4reC4meC5geC4geC5iOC4mQ!5e0!3m2!1sth!2sth!4v1608193346556!5m2!1sth!2sth"
-          width="100%"
-          height="400"
-          frameborder="0"
-          style="border: 0"
-          allowfullscreen=""
-          aria-hidden="false"
-          tabindex="0"
-        ></iframe>
-      </v-card-text>
-    </v-card>
+  <div class="center" style="margin-top: 100px">
+    <vs-select placeholder="Select" v-model="value">
+      <vs-option label="Vuesax" value="1"> Vuesax </vs-option>
+      <vs-option label="Vue" value="2"> Vue </vs-option>
+      <vs-option label="Javascript" value="3"> Javascript </vs-option>
+      <vs-option disabled label="Sass" value="4"> Sass </vs-option>
+      <vs-option label="Typescript" value="5"> Typescript </vs-option>
+      <vs-option label="Webpack" value="6"> Webpack </vs-option>
+      <vs-option label="Nodejs" value="7"> Nodejs </vs-option>
+    </vs-select>
+    <div>
+      <div class="center" style="margin-top: 100px">
+        <vs-select placeholder="Select" v-model="value2">
+          <vs-option
+            v-for="(item, index) in province"
+            :key="index + 1"
+            :label=item.fm_province
+            v-bind:value=item.fm_province
+          >
+           {{item.fm_province}}
+          </vs-option>
+        </vs-select>
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
-export default {};
+import axios from "axios";
+export default {
+  data() {
+    return {
+      value: "",
+      value2: "",
+      province: "",
+    };
+  },
+  mounted() {
+    this.PROVINCE();
+  },
+  methods: {
+    PROVINCE() {
+      axios
+        .get("http://localhost:4000/province")
+        .then((res) => {
+          this.province = res.data;
+          console.log(this.province);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        
+        });
+    },
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-</style>
+        

@@ -194,7 +194,7 @@ export default {
   methods: {
     data_offline() {
       axios
-        .get("http://192.168.1.56:4000/farm")
+        .get("http://192.168.1.43:4000/farm")
         .then((res) => {
           this.data = res;
           for (var i = 0; i < this.data.data.length; i++) {
@@ -209,7 +209,7 @@ export default {
     },
     data_online() {
       axios
-        .get("http://192.168.1.56:4000/farm")
+        .get("http://192.168.1.43:4000/farm")
         .then((res) => {
           this.data = res;
           for (var i = 0; i < this.data.data.length; i++) {
@@ -225,7 +225,7 @@ export default {
     },
     chart() {
       axios
-        .get("http://192.168.1.56:4000/farm")
+        .get("http://192.168.1.43:4000/farm")
         .then((res) => {
           const responseData = res.data;
           console.log(responseData);
@@ -280,7 +280,7 @@ export default {
     },
     chart_pipe() {
       axios
-        .get("http://192.168.1.56:4000/farm")
+        .get("http://192.168.1.43:4000/farm")
         .then((res) => {
           const responseData = res.data;
           console.log(responseData);
@@ -344,7 +344,7 @@ export default {
     },
     chart_radar() {
       axios
-        .get("http://192.168.1.56:4000/farm")
+        .get("http://192.168.1.43:4000/farm")
         .then((res) => {
           const responseData = res.data;
           console.log(responseData);

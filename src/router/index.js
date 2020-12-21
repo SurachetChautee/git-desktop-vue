@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Report from '@/views/Report'
 import Maps from '@/views/Map'
+import Register from '@/views/Register'
 Vue.use(VueRouter)
 
 const routes = [
@@ -28,6 +29,12 @@ const routes = [
     path: '/map',
     name: 'map',
     component: Maps
+  },
+  {
+    path:'/register',
+    name: 'register',
+    component:Register
+
   }
   
 ]
