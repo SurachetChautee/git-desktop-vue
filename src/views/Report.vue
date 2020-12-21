@@ -65,49 +65,94 @@
             </v-card-text>
           </v-card>
         </vs-col>
+        <vs-col w="3">
+          <v-card
+            :loading="loading"
+            class="card-chat"
+            max-width="270"
+            max-height="132"
+          >
+            <v-card-text>
+              <div>
+                <vs-row>
+                  <vs-col w="2">
+                    <img
+                      :src="'http://127.0.0.1/icweather/' + ic"
+                      width="80"
+                      height="70"
+                      style="margin-top: 13px"
+                    />
+                  </vs-col>
+                  <vs-col w="9">
+                    <p
+                      class="text-p-online"
+                      style="margin-left: 70px; margin-top: 20px"
+                    >
+                      {{ tp }}°C<br />ความชื้น {{ hu }}%
+                    </p>
+                  </vs-col>
+                </vs-row>
+              </div>
+            </v-card-text>
+          </v-card>
+        </vs-col>
       </vs-row>
     </div>
     <vs-row>
-      <vs-col w="8">
+      <vs-col w="9">
         <div class="card-chart">
           <v-card
             :loading="loading"
             class="mx-auto my-12"
-            width="493"
+            width="785"
             height="300"
           >
             <v-card-text>
-              <canvas id="myChart" height="180%"></canvas>
+              <canvas id="myChart" height="110%"></canvas>
             </v-card-text>
           </v-card>
         </div>
       </vs-col>
-      <vs-col w="4">
+      <vs-col w="3">
         <div class="card-chart2">
           <v-card
             :loading="loading"
-            class="mx-auto my-12" 
-            width="240"
+            class="mx-auto my-12"
+            width="269"
             height="300"
           >
             <v-card-text>
-              <canvas id="my-chart" height="350%"></canvas>
+              <canvas id="my-chart" height="330%"></canvas>
             </v-card-text>
           </v-card>
         </div>
       </vs-col>
     </vs-row>
     <vs-row>
-      <vs-col w="12">
+      <vs-col w="9">
         <div>
           <v-card
             :loading="loading"
             class="chart-line"
-            width="745"
+            width="785"
             height="300"
           >
             <v-card-text>
               <canvas id="my-chart-line" height="110%"></canvas>
+            </v-card-text>
+          </v-card>
+        </div>
+      </vs-col>
+      <vs-col w="3">
+        <div style="margin-top: 8.8%; margin-left: -4%">
+          <v-card
+            :loading="loading"
+            class="mx-auto my-12"
+            width="265"
+            height="300"
+          >
+            <v-card-text>
+              <canvas id="my-chart-radar" height="330%"></canvas>
             </v-card-text>
           </v-card>
         </div>
@@ -132,6 +177,9 @@ export default {
       on_1: 0,
       off_1: 0,
       total_1: 0,
+      tp: "",
+      ic: "",
+      hu: "",
     };
   },
   mounted() {
@@ -140,6 +188,8 @@ export default {
     this.chart();
     this.chart_pipe();
     this.chart_line();
+    this.chart_radar();
+    this.weather();
   },
   methods: {
     data_offline() {
@@ -292,6 +342,60 @@ export default {
       });
       console.log(myChart);
     },
+    chart_radar() {
+      axios
+        .get("http://192.168.1.56:4000/farm")
+        .then((res) => {
+          const responseData = res.data;
+          console.log(responseData);
+          var x = 0;
+          var y = 0;
+          for (var i = 0; i < responseData.length; i++) {
+            if (responseData[i].fm_status == 1) {
+              x = x + 1;
+            } else {
+              y = y + 1;
+            }
+          }
+          this.total_1 = responseData.length;
+          var ctx = document.getElementById("my-chart-radar");
+          var myChart = new Chart(ctx, {
+            type: "polarArea",
+            data: {
+              labels: ["Online", "Offine", "All equipment"],
+              datasets: [
+                {
+                  label: "Page A",
+                  data: [x, y, this.total_1],
+                  backgroundColor: ["#30475e", "#7e8a97", "#cbaf87"],
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+            },
+          });
+          console.log(myChart);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+    weather() {
+      axios
+        .get(
+          "http://api.airvisual.com/v2/nearest_city?lat=16.479666&lon=102.803606&key=2add3575-a73d-4cb8-886a-78d187b87b0b"
+        )
+        .then((res) => {
+          this.tp = res.data.data.current.weather.tp;
+          this.hu = res.data.data.current.weather.hu;
+          this.ic = res.data.data.current.weather.ic + ".png";
+          console.log(this.ic);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
   },
 };
 </script>
@@ -299,7 +403,9 @@ export default {
 <style scoped>
 .box {
   margin-top: 100px;
-  margin-left: 20%;
+  margin-left: 4%;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 .text-p-online {
   margin-left: 25px;
@@ -319,15 +425,15 @@ export default {
 }
 .card-chart {
   margin-top: 3%;
-  margin-left: 30%;
+  margin-left: 11.7%;
 }
 .card-chart2 {
-  margin-top: 6%;
-  margin-left: -20%;
+  margin-top: 9%;
+  margin-left: -5%;
 }
 .chart-line {
-  margin-top: 2%;
-  margin-left: 20%;
+  margin-top: 3%;
+  margin-left: 11.8%;
   margin-bottom: 5%;
 }
 </style>

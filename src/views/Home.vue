@@ -136,11 +136,7 @@ export default {
           this.total = res.data.length;
           console.log(this.total);
           // geocoder.geocoder({location:latlng},(results,status)=>{
-          //   if(status=="OK"){
-          //     var address =results[0].formatted_address
-          //     console.log(address)
-          //   }
-          //})
+
         })
         .catch((error) => {
           console.log("error", error);
@@ -154,9 +150,7 @@ export default {
       };
       axios.put("http://localhost:4000/update_status", data).then((res) => {
         console.log(res);
-        location.reload();
-        // this.data=""
-        // this.CALL_API_FARM()
+        window.history.go()
       });
     },
   },

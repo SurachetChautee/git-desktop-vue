@@ -13,6 +13,7 @@
     "bootstrap-vue": "^2.21.0",
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
+    "geocoder": "^0.2.3",
     "hchs-vue-charts": "^1.2.8",
     "material-icons": "^0.5.1",
     "vue": "^2.6.12",
