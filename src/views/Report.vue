@@ -164,6 +164,7 @@
 <script>
 import axios from "axios";
 import Chart from "chart.js";
+
 export default {
   components: {},
   data() {
@@ -401,6 +402,7 @@ export default {
 </script>
 
 <style scoped>
+
 .box {
   margin-top: 100px;
   margin-left: 4%;

@@ -3,18 +3,15 @@
     <div class="card-card">
       <br />
       <h1 class="title-h">รายการทั้งหมด: {{ total }}</h1>
-
       <vs-select placeholder="Select" v-model="value" @change="select(value)">
-        <vs-option label="ทั้งหมด" value="1">
-          ทั้งหมด
-        </vs-option>
+        <vs-option label="ทั้งหมด" value="1"> ทั้งหมด </vs-option>
         <vs-option
-          v-for="(item) in province"
-          v-bind:key="item.fm_province"
-          v-bind:label="item.fm_province"
-          v-bind:value="item.fm_province"
+          v-for="(item,index) in province"
+          v-bind:key="index+2"
+          v-bind:label="item.province"
+          v-bind:value="item.province"
         >
-          {{item.fm_province}}
+          {{ item.province }}
         </vs-option>
       </vs-select>
 
@@ -187,7 +184,6 @@ export default {
           this.data = res.data;
           this.total = res.data.length;
           console.log(this.total);
-          // geocoder.geocoder({location:latlng},(results,status)=>{
         })
         .catch((error) => {
           console.log("error", error);
@@ -230,7 +226,7 @@ export default {
           this.data = res.data;
           this.total = "";
           this.total = res.data.length;
-          console.log(res)
+          console.log(res);
         });
       }
     },
