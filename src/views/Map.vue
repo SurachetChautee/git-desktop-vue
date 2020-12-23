@@ -1,59 +1,78 @@
-
 <template>
-  <div class="center" style="margin-top: 100px">
-    <vs-select placeholder="Select" v-model="value">
-      <vs-option label="Vuesax" value="1"> Vuesax </vs-option>
-      <vs-option label="Vue" value="2"> Vue </vs-option>
-      <vs-option label="Javascript" value="3"> Javascript </vs-option>
-      <vs-option disabled label="Sass" value="4"> Sass </vs-option>
-      <vs-option label="Typescript" value="5"> Typescript </vs-option>
-      <vs-option label="Webpack" value="6"> Webpack </vs-option>
-      <vs-option label="Nodejs" value="7"> Nodejs </vs-option>
-    </vs-select>
-    <div>
-      <div class="center" style="margin-top: 100px">
-        <vs-select placeholder="Select" v-model="value2">
-          <vs-option
-            v-for="(item, index) in province"
-            :key="index + 1"
-            :label=item.fm_province
-            v-bind:value=item.fm_province
-          >
-           {{item.fm_province}}
-          </vs-option>
-        </vs-select>
-      </div>
-    </div>
+  <div style="margin-top: 50px">
+    <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+    <v-text-field
+      v-model="username"
+      :counter="10"
+      :rules="nameRules"
+      label="Username"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="password"
+      :counter="10"
+      :rules="nameRules"
+      label="Password"
+      required
+    ></v-text-field>
+
+    <v-text-field
+      v-model="name"
+      :counter="10"
+      :rules="nameRules"
+      label="Name"
+      required
+    ></v-text-field>
+
+    <v-text-field
+      v-model="address"
+      :counter="10"
+      :rules="nameRules"
+      label="Address"
+      required
+    ></v-text-field>
+    <vs-button color="" type="" @click="summit()">summit</vs-button>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 export default {
   data() {
     return {
-      value: "",
-      value2: "",
-      province: "",
+      file: null,
+      username: "",
+      password: "",
+      name: "",
+      address: "",
     };
   },
-  mounted() {
-    this.PROVINCE();
-  },
+  mounted() {},
   methods: {
-    PROVINCE() {
-      axios
-        .get("http://localhost:4000/province")
-        .then((res) => {
-          this.province = res.data;
-          console.log(this.province);
-        })
-        .catch((error) => {
-          console.log("error", error);
-        
-        });
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
+    },
+
+    summit() {
+      // let data = {
+      //       username: this.username,
+      //       password: this.password,
+      //       name: this.name,
+      //       address: this.address,
+      //     };
+      let formData = new FormData();
+      formData.append("username", this.username);
+      formData.append("password", this.password);
+      formData.append("name", this.name);
+      formData.append("address", this.address);
+      formData.append("profile_pic", this.file);
+      axios.post("http://localhost:5000/register", formData).then((res) => {
+        console.log(res);
+      });
     },
   },
 };
 </script>
 
-        
+<style lang="scss" scoped>
+</style>
