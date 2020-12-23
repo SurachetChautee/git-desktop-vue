@@ -22,7 +22,7 @@
         <vs-navbar-item :active="active == 'components'" id="components" @click="map()">
           Map
         </vs-navbar-item>
-        <vs-navbar-item :active="active == 'license'" id="license">
+        <vs-navbar-item :active="active == 'license'" id="license" @click="about()">
           license
         </vs-navbar-item>
       </vs-navbar>
@@ -167,6 +167,9 @@ export default {
     },
     map(){
       this.$router.push('/map')
+    },
+    about(){
+      this.$router.push('/about')
     }
   },
 };

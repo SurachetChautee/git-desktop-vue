@@ -61,12 +61,8 @@ export default {
       //       address: this.address,
       //     };
       let formData = new FormData();
-      formData.append("username", this.username);
-      formData.append("password", this.password);
-      formData.append("name", this.name);
-      formData.append("address", this.address);
       formData.append("profile_pic", this.file);
-      axios.post("http://localhost:5000/register", formData).then((res) => {
+      axios.post("http://localhost:5000/register",formData).then((res) => {
         console.log(res);
       });
     },
