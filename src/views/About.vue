@@ -215,19 +215,37 @@
               ><br />
               <vs-input label="latitude" v-model="input_3" />
             </vs-col>
-            <vs-col w="5"
+            <vs-col w="6"
               ><br />
               <vs-input label="longitude" v-model="input_4" />
             </vs-col>
+            <vs-button
+              relief
+              color="#7d33ff"
+              :active="active == 0"
+              style="margin-top: 5%; min-width: 25%"
+            >
+              <vs-row>
+                <vs-col w="3">
+                  <img
+                    src="https://www.flaticon.com/svg/static/icons/svg/622/622669.svg"
+                    height="10"
+                    width="10"
+                  />
+                </vs-col>
+                <vs-col w="9"> ค้นหาตำแหน่ง </vs-col>
+              </vs-row>
+            </vs-button>
           </vs-row>
         </div>
         <template #footer>
           <div class="con-footer">
             <vs-button
-              relief
+              success
+              gradient
               :active="active == 0"
               @click="insert()"
-              style="margin-left: 38%; margin-top: 5%; min-width: 20%"
+              style="margin-left: 65%; margin-top: -10%; min-width: 25%"
             >
               <vs-row>
                 <vs-col w="3">
@@ -257,11 +275,11 @@ export default {
     active: false,
     active2: false,
     id: "",
-    value1: "1",
-    value2: "2",
-    value3: "3",
-    value4: "4",
-    value5: "5",
+    value1: "",
+    value2: "",
+    value3: "",
+    value4: "",
+    value5: "",
     input_1: "",
     input_2: "",
     input_3: "",
@@ -324,10 +342,10 @@ export default {
     },
 
     delete_data(id) {
-      let data={
-        id:id
-      }
-       axios
+      let data = {
+        id: id,
+      };
+      axios
         .post("http://localhost:5000/delete", data)
         .then((res) => {
           console.log(res);
