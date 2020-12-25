@@ -168,7 +168,7 @@ export default {
       total: "",
       province: [],
       myStyle: {
-        backgroundColor: "#fafafa",
+        backgroundColor: "",
       },
     };
   },

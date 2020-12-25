@@ -1,45 +1,42 @@
 <template>
-  <div class="box">
-    <div>
-      <v-card elevation="2" height="400" width="700">
-        <div style="margin-left: 25%">
-          <vs-row>
-            <vs-col w="12">
-              <div id="app">
-                <input type="file" @change="onFileChange" />
-                <div id="preview">
-                  <img v-if="url" :src="url" />
-                </div>
-              </div>
-            </vs-col>
-          </vs-row>
-        </div>
-      </v-card>
-    </div>
-  </div>
+  <q-page padding>
+    <GmapMap
+      id="map"
+      :center="{ lat: 16.429876, lng: 102.822213 }"
+      :zoom="7"
+      map-type-id="terrain"
+      style="width: 100%; height: 500px"
+      @click="mark"
+    >
+    </GmapMap>
+  </q-page>
 </template>
 
-<script>
+<script type="text/javascript">
+import { gmapApi } from "vue2-google-maps";
+
 export default {
   data() {
     return {
-      url: null,
+      markers: [
+        {
+          position: { lat: 10, lng: 10 },
+        },
+        {
+          position: { lat: 50, lng: 10 },
+        },
+      ],
     };
   },
-  mounted() {},
   methods: {
-    onFileChange(e) {
-      const file = e.target.files[0];
-      this.url = URL.createObjectURL(file);
+    mark(event) {
+      console.log(event.latLng.lat().toFixed(6));
+      console.log(event.latLng.lng().toFixed(6));
     },
+    
+  },
+  computed: {
+    google: gmapApi,
   },
 };
-</script>
-
-<style scoped>
-.box {
-  margin-top: 100px;
-  margin-left: 25%;
-  margin-right: 25%;
-}
-</style>
+</script>>

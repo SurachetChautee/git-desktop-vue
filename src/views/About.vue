@@ -20,8 +20,7 @@
             <vs-th style="width: 1px">ลำดับ</vs-th>
             <vs-th>ชื่ออุปกรณ์</vs-th>
             <vs-th>สถานะ</vs-th>
-            <vs-th>latitude</vs-th>
-            <vs-th>longitude</vs-th>
+            <vs-th>latitude , longitude</vs-th>
             <vs-th>จังหวัด</vs-th>
             <vs-th></vs-th>
             <vs-th></vs-th>
@@ -63,12 +62,7 @@
                 </vs-button>
               </div>
             </vs-td>
-            <vs-td>
-              {{ tr.fm_latitude }}
-            </vs-td>
-            <vs-td>
-              {{ tr.fm_longitude }}
-            </vs-td>
+            <vs-td> {{ tr.fm_latitude }} , {{ tr.fm_longitude }} </vs-td>
             <vs-td>
               {{ tr.fm_province }}
             </vs-td>
@@ -199,7 +193,7 @@
           </template>
         </div>
       </vs-dialog>
-      <vs-dialog width="550px" not-center v-model="active">
+      <vs-dialog width="550px" not-center v-model="active" @close="Close()">
         <template #header>
           <h4 class="not-margin">เพิ่มอุปกรณ์</h4>
         </template>
@@ -224,6 +218,7 @@
               color="#7d33ff"
               :active="active == 0"
               style="margin-top: 5%; min-width: 25%"
+              @click="position()"
             >
               <vs-row>
                 <vs-col w="3">
@@ -261,11 +256,49 @@
           </div>
         </template>
       </vs-dialog>
+
+      <vs-dialog overflow-hidden full-screen v-model="active3"  @close="Close()">
+        <template #header>
+          <vs-row style="margin-top: 20px">
+            <vs-col w="3">
+              <vs-input label="latitude" v-model="input_3" />
+            </vs-col>
+            <vs-col w="3" style="margin-left: -50px">
+              <vs-input label="longitude" v-model="input_4" />
+            </vs-col>
+            <vs-col w="3" style="margin-left: -60px">
+              <vs-button
+                circle
+                success
+                gradient
+                @click="active3 = false"
+                style="min-width: 30%"
+              >
+                ตกลง <i class="bx bxs-bell-ring"></i>
+              </vs-button>
+            </vs-col>
+          </vs-row>
+        </template>
+        <div>
+          <GmapMap
+            id="map"
+            :center="{ lat: 16.429876, lng: 102.822213 }"
+            :zoom="10"
+            map-type-id="terrain"
+            style="width: 100%; height: 480px"
+            @click="mark"
+          >
+          </GmapMap>
+        </div>
+        <template #footer> </template>
+      </vs-dialog>
     </div>
   </div>
 </template>
 <script>
+import swal from "sweetalert";
 import axios from "axios";
+import { gmapApi } from "vue2-google-maps";
 export default {
   data: () => ({
     page: 1,
@@ -274,6 +307,7 @@ export default {
     data_select: "",
     active: false,
     active2: false,
+    active3: false,
     id: "",
     value1: "",
     value2: "",
@@ -285,6 +319,7 @@ export default {
     input_3: "",
     input_4: "",
   }),
+  created() {},
   mounted() {
     this.CALL_API_FARM();
   },
@@ -333,7 +368,7 @@ export default {
       axios
         .post("http://localhost:5000/update_data", data)
         .then((res) => {
-          console.log(res);
+          console.log(res.data);
           location.reload();
         })
         .catch((error) => {
@@ -342,18 +377,37 @@ export default {
     },
 
     delete_data(id) {
+      console.log(id);
+      swal({
+        title: "คำเตือน",
+        text: "คุณต้องการลบอุปกรณ์ที่เลือกหรือไม่",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .post("http://localhost:5000/delete", data)
+            .then((res) => {
+              swal("ลบข้อมูลสำเร็จ", {
+                icon: "success",
+              });
+              setTimeout(() => {
+                console.log(res);
+                location.reload();
+              }, 1000);
+            })
+            .catch((error) => {
+              console.log("error", error);
+            });
+        } else {
+          console.log("");
+        }
+      });
+
       let data = {
         id: id,
       };
-      axios
-        .post("http://localhost:5000/delete", data)
-        .then((res) => {
-          console.log(res);
-          location.reload();
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
     },
     insert() {
       if (this.input_1 == "") {
@@ -382,6 +436,24 @@ export default {
           });
       }
     },
+    position() {
+      this.active3 = true;
+      this.input_3 = "";
+      this.input_4 = "";
+    },
+    mark(event) {
+      // console.log(event.latLng.lat());
+      // console.log(event.latLng.lng());
+      this.input_3 = event.latLng.lat().toFixed(6);
+      this.input_4 = event.latLng.lng().toFixed(6);
+    },
+    Close(){
+      this.input_3=""
+      this.input_4=""
+    }
+  },
+  computed: {
+    google: gmapApi,
   },
 };
 </script>
