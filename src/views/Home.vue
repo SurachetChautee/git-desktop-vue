@@ -3,17 +3,20 @@
     <div class="card-card">
       <br />
       <h1 class="title-h">รายการทั้งหมด: {{ total }}</h1>
-      <vs-select placeholder="Select" v-model="value" @change="select(value)">
+      <vs-select placeholder="Select" v-model="value" @change="select(value,item.province)">
         <vs-option label="ทั้งหมด" value="1"> ทั้งหมด </vs-option>
         <vs-option
-          v-for="(item,index) in province"
-          v-bind:key="index+2"
+          v-for="(item, index) in province"
+          v-bind:key="index + 2"
           v-bind:label="item.province"
           v-bind:value="item.province"
         >
           {{ item.province }}
         </vs-option>
+        
       </vs-select>
+
+      
 
       <vs-row>
         <vs-col
@@ -98,7 +101,7 @@
                             flat
                             success
                             animation-type="vertical"
-                            @click="active = !active"
+                            @click="map(item.fm_latitude, item.fm_longitude,item.fm_name)"
                           >
                             ดูแผนที่
                             <template #animate>
@@ -130,19 +133,36 @@
                       ปิดการใช้งาน
                     </vs-button>
                   </div>
-                  <vs-dialog width="80%" not-center v-model="active">
+                  <vs-dialog width="90%" not-center v-model="active">
                     <template #header> </template>
                     <div class="con-content">
-                      <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7652.0752819356785!2d102.82203102170575!3d16.473631604528702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31228a42912a3673%3A0xe236ed5e8a0a21d9!2sKKU%20Smart%20Learning%20Academy!5e0!3m2!1sth!2sth!4v1608522119733!5m2!1sth!2sth"
-                        width="770"
-                        height="400"
-                        frameborder="0"
-                        style="border: 0"
-                        allowfullscreen=""
-                        aria-hidden="false"
-                        tabindex="0"
-                      ></iframe>
+                      <GmapMap
+                        id="map"
+                        :center="{ lat: lat, lng: long }"
+                        :zoom="15"
+                        map-type-id="terrain"
+                        style="width: 100%; height: 405px; margin-top: 5px"
+                        ref="mapRef"
+                      >
+                        <gmap-marker
+                          :position="{
+                            lat: lat,
+                            lng: long,
+                          }"
+                          :clickale="true"
+                          :draggable="true"
+                        >
+                          <gmap-info-window
+                            
+                            :position="{
+                              lat: lat,
+                              lng: long,
+                            }"
+                          >
+                            {{ position }}
+                          </gmap-info-window>
+                        </gmap-marker>
+                      </GmapMap>
                     </div>
                   </vs-dialog>
                 </div>
@@ -170,6 +190,9 @@ export default {
       myStyle: {
         backgroundColor: "",
       },
+      lat: "",
+      long: "",
+      position: "",
     };
   },
   mounted() {
@@ -179,7 +202,7 @@ export default {
   methods: {
     CALL_API_FARM() {
       axios
-        .get("http://localhost:4000/farm")
+        .get("http://localhost:5000/farm")
         .then((res) => {
           this.data = res.data;
           this.total = res.data.length;
@@ -190,9 +213,9 @@ export default {
         });
     },
 
-    PROVINCE() {
-      axios
-        .get("http://localhost:4000/province")
+    async PROVINCE() {
+       await axios
+        .get("http://localhost:5000/province")
         .then((res) => {
           this.province = res.data;
           console.log(this.province);
@@ -207,12 +230,13 @@ export default {
         id: id,
         status: status,
       };
-      axios.put("http://localhost:4000/update_status", data).then((res) => {
+      axios.put("http://localhost:5000/update_status", data).then((res) => {
         console.log(res);
         location.reload();
       });
     },
-    select(value) {
+    select(value,label) {
+      console.log(label)
       if (value == 1) {
         console.log("all");
         this.data = "";
@@ -221,7 +245,7 @@ export default {
         let data = {
           id: value,
         };
-        axios.post("http://localhost:4000/select", data).then((res) => {
+        axios.post("http://localhost:5000/select", data).then((res) => {
           this.data = "";
           this.data = res.data;
           this.total = "";
@@ -229,6 +253,12 @@ export default {
           console.log(res);
         });
       }
+    },
+    map(lat, long, position) {
+      this.active = true;
+      this.lat = lat;
+      this.long = long;
+      this.position = position;
     },
   },
 };

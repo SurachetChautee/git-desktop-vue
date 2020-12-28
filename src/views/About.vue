@@ -2,22 +2,45 @@
 <template>
   <div class="center">
     <div style="margin-top: 60px">
-      <vs-button relief @click="active = !active" style="min-width: 110px">
-        <vs-row>
-          <vs-col w="3">
-            <img
-              src="https://www.flaticon.com/svg/static/icons/svg/1828/1828925.svg"
-              height="10"
-              width="10"
-            />
-          </vs-col>
-          <vs-col w="9"> เพิ่มอุปกรณ์ </vs-col>
-        </vs-row>
-      </vs-button>
+      <vs-row>
+        <vs-col w="6">
+          <vs-button relief @click="active = !active" style="min-width: 110px">
+            <vs-row>
+              <vs-col w="3">
+                <img
+                  src="https://www.flaticon.com/svg/static/icons/svg/1828/1828925.svg"
+                  height="10"
+                  width="10"
+                />
+              </vs-col>
+              <vs-col w="9"> เพิ่มอุปกรณ์ </vs-col>
+            </vs-row>
+          </vs-button>
+        </vs-col>
+        <vs-col w="6">
+          <vs-select
+            placeholder="เลือกจังหวัด"
+            filter
+            v-model="select"
+            style="margin-left: 65.5%"
+            @change="select()"
+          >
+            <vs-option
+              v-for="(item, index) in provinces"
+              :key="index"
+              :label="item.name_th"
+              :value="item.id"
+            >
+              {{ item.name_th }}
+            </vs-option>
+          </vs-select>
+        </vs-col>
+      </vs-row>
+
       <vs-table>
         <template #thead>
           <vs-tr>
-            <vs-th style="width: 1px">ลำดับ</vs-th>
+            <vs-th style="width: 0.5px">ลำดับ</vs-th>
             <vs-th>ชื่ออุปกรณ์</vs-th>
             <vs-th>สถานะ</vs-th>
             <vs-th>latitude , longitude</vs-th>
@@ -147,6 +170,18 @@
                 <br />
                 <vs-input label="longitude" v-model="value4" />
               </vs-col>
+              <vs-button
+                icon
+                color="#7d33ff"
+                relief
+                style="margin-top: -35px; margin-left: 93%"
+              >
+                <img
+                  src="https://www.flaticon.com/svg/static/icons/svg/622/622669.svg"
+                  height="10"
+                  width="10"
+                />
+              </vs-button>
             </vs-row>
           </div>
 
@@ -257,7 +292,7 @@
         </template>
       </vs-dialog>
 
-      <vs-dialog overflow-hidden full-screen v-model="active3"  @close="Close()">
+      <vs-dialog overflow-hidden full-screen v-model="active3" @close="Close()">
         <template #header>
           <vs-row style="margin-top: 20px">
             <vs-col w="3">
@@ -285,9 +320,14 @@
             :center="{ lat: 16.429876, lng: 102.822213 }"
             :zoom="10"
             map-type-id="terrain"
-            style="width: 100%; height: 480px"
+            style="width: 100%; height: 490px; margin-top: -15px"
             @click="mark"
           >
+            <gmap-marker
+              :position="{ lat: lat, lng: long }"
+              :clickale="true"
+              :draggable="true"
+            />
           </GmapMap>
         </div>
         <template #footer> </template>
@@ -318,14 +358,19 @@ export default {
     input_2: "",
     input_3: "",
     input_4: "",
+    select: "",
+    provinces: [],
+    lat: "",
+    long: "",
   }),
   created() {},
   mounted() {
     this.CALL_API_FARM();
+    this.get_province();
   },
-  methods: {
-    CALL_API_FARM() {
-      axios
+ methods: {
+    async CALL_API_FARM() {
+         axios
         .get("http://localhost:5000/farm")
         .then((res) => {
           this.farm = res.data;
@@ -336,7 +381,7 @@ export default {
         });
     },
 
-    SELECT_DATA(id) {
+     SELECT_DATA(id) {
       let data = {
         id: id,
       };
@@ -411,13 +456,11 @@ export default {
     },
     insert() {
       if (this.input_1 == "") {
-        alert("1");
+        alert("กรุณาใส่ชื่ออุปกณ์");
       } else if (this.input_2 == "") {
-        alert("2");
-      } else if (this.input_3 == "") {
-        alert("3");
-      } else if (this.input_4 == "") {
-        alert("4");
+        alert("กรุณาเลือกจังหวัด");
+      } else if (this.input_3 == "" || this.input_4 == "") {
+        alert("กรุณาใส่ latitude และ longitude");
       } else {
         let data = {
           name: this.input_1,
@@ -446,11 +489,28 @@ export default {
       // console.log(event.latLng.lng());
       this.input_3 = event.latLng.lat().toFixed(6);
       this.input_4 = event.latLng.lng().toFixed(6);
+      this.lat = event.latLng.lat();
+      this.long = event.latLng.lng();
     },
-    Close(){
-      this.input_3=""
-      this.input_4=""
-    }
+    Close() {
+      this.input_3 = "";
+      this.input_4 = "";
+    },
+
+    get_province() {
+      axios
+        .get("http://localhost:5000/get_provinces")
+        .then((res) => {
+          this.provinces = res.data;
+          console.log(this.provinces);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+    select() {
+      console.log(this.select);
+    },
   },
   computed: {
     google: gmapApi,
